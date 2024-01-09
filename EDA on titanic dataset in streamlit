@@ -1,0 +1,301 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/adilmaqsood1/Data-Science-Projects/blob/main/EDA%20on%20titanic%20dataset%20in%20streamlit\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 5,
+      "metadata": {
+        "id": "Hb3xxhxHbcwZ",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "35fcd584-d12d-48ea-fb57-ee51f3dd35f5"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m8.4/8.4 MB\u001b[0m \u001b[31m17.1 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m190.6/190.6 kB\u001b[0m \u001b[31m18.8 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m4.8/4.8 MB\u001b[0m \u001b[31m36.9 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m82.1/82.1 kB\u001b[0m \u001b[31m9.0 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m62.7/62.7 kB\u001b[0m \u001b[31m6.9 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25h"
+          ]
+        }
+      ],
+      "source": [
+        "!pip install streamlit -q"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 2,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "iYm3G1r9bumQ",
+        "outputId": "3dc77a0e-bf22-4d3c-adef-aa04cb7b9295"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Writing app.py\n"
+          ]
+        }
+      ],
+      "source": [
+        "%%writefile app.py\n",
+        "import streamlit as st\n",
+        "import pandas as pd\n",
+        "import seaborn as sns\n",
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "# Load Titanic dataset\n",
+        "@st.cache\n",
+        "def load_data():\n",
+        "    url = \"https://web.stanford.edu/class/archive/cs/cs109/cs109.1166/stuff/titanic.csv\"\n",
+        "    return pd.read_csv(url)\n",
+        "\n",
+        "df = load_data()\n",
+        "\n",
+        "# Sidebar with options\n",
+        "st.sidebar.title(\"Titanic EDA Dashboard\")\n",
+        "selected_chart = st.sidebar.selectbox(\"Select Chart\", [\"Survival Count\", \"Age Distribution\", \"Class Distribution\", \"Gender Distribution\", \"Survival by Class\", \"Survival by Age Group\"])\n",
+        "\n",
+        "# Main content\n",
+        "st.title(\"Exploratory Data Analysis (EDA) - Titanic Dataset\")\n",
+        "\n",
+        "# Display the selected chart\n",
+        "if selected_chart == \"Survival Count\":\n",
+        "    st.subheader(\"Survival Count\")\n",
+        "    survival_count = df['Survived'].value_counts()\n",
+        "    st.bar_chart(survival_count)\n",
+        "\n",
+        "elif selected_chart == \"Age Distribution\":\n",
+        "    st.subheader(\"Age Distribution\")\n",
+        "    age_distribution = sns.histplot(df['Age'].dropna(), kde=True)\n",
+        "    st.pyplot(age_distribution)\n",
+        "\n",
+        "elif selected_chart == \"Class Distribution\":\n",
+        "    st.subheader(\"Class Distribution\")\n",
+        "    class_distribution = df['Pclass'].value_counts()\n",
+        "    st.bar_chart(class_distribution)\n",
+        "\n",
+        "elif selected_chart == \"Gender Distribution\":\n",
+        "    st.subheader(\"Gender Distribution\")\n",
+        "    gender_distribution = df['Sex'].value_counts()\n",
+        "    st.bar_chart(gender_distribution)\n",
+        "\n",
+        "elif selected_chart == \"Survival by Class\":\n",
+        "    st.subheader(\"Survival by Class\")\n",
+        "    survival_by_class = sns.countplot(x='Pclass', hue='Survived', data=df)\n",
+        "    st.pyplot(survival_by_class)\n",
+        "\n",
+        "elif selected_chart == \"Survival by Age Group\":\n",
+        "    st.subheader(\"Survival by Age Group\")\n",
+        "    age_groups = pd.cut(df['Age'], bins=[0, 18, 35, 50, 100], labels=['0-18', '19-35', '36-50', '50+'])\n",
+        "    df['AgeGroup'] = age_groups\n",
+        "    survival_by_age_group = sns.countplot(x='AgeGroup', hue='Survived', data=df)\n",
+        "    st.pyplot(survival_by_age_group)\n",
+        "\n",
+        "# Show raw data (optional)\n",
+        "if st.checkbox(\"Show Raw Data\"):\n",
+        "    st.subheader(\"Raw Data\")\n",
+        "    st.write(df)\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 7,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "D09SIUJr1TQ-",
+        "outputId": "4b5ca20b-fa39-40f1-8f6b-f353fe6dda22"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "35.190.163.69\n"
+          ]
+        }
+      ],
+      "source": [
+        "! wget -q -O - ipv4.icanhazip.com"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Vfiwmig91UOy",
+        "outputId": "963415e1-906f-40fc-d0d2-8698f88a863d"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[##................] / fetchMetadata: sill resolveWithNewModule ms@2.1.2 checki\u001b[0m\u001b[K\n",
+            "Collecting usage statistics. To deactivate, set browser.gatherUsageStats to False.\n",
+            "\u001b[0m\n",
+            "\u001b[0m\n",
+            "\u001b[34m\u001b[1m  You can now view your Streamlit app in your browser.\u001b[0m\n",
+            "\u001b[0m\n",
+            "\u001b[34m  Network URL: \u001b[0m\u001b[1mhttp://172.28.0.12:8501\u001b[0m\n",
+            "\u001b[34m  External URL: \u001b[0m\u001b[1mhttp://35.190.163.69:8501\u001b[0m\n",
+            "\u001b[0m\n",
+            "\u001b[K\u001b[?25hnpx: installed 22 in 2.204s\n",
+            "your url is: https://smart-maps-taste.loca.lt\n",
+            "2023-12-27 05:59:49.177 `st.cache` is deprecated. Please use one of Streamlit's new caching commands,\n",
+            "`st.cache_data` or `st.cache_resource`.\n",
+            "\n",
+            "More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).\n",
+            "2023-12-27 06:00:00.978 `st.cache` is deprecated. Please use one of Streamlit's new caching commands,\n",
+            "`st.cache_data` or `st.cache_resource`.\n",
+            "\n",
+            "More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).\n",
+            "2023-12-27 06:00:14.494 `st.cache` is deprecated. Please use one of Streamlit's new caching commands,\n",
+            "`st.cache_data` or `st.cache_resource`.\n",
+            "\n",
+            "More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).\n",
+            "2023-12-27 06:00:14.698 Uncaught app exception\n",
+            "Traceback (most recent call last):\n",
+            "  File \"/usr/local/lib/python3.10/dist-packages/streamlit/runtime/scriptrunner/script_runner.py\", line 534, in _run_script\n",
+            "    exec(code, module.__dict__)\n",
+            "  File \"/content/app.py\", line 30, in <module>\n",
+            "    st.pyplot(age_distribution)\n",
+            "  File \"/usr/local/lib/python3.10/dist-packages/streamlit/runtime/metrics_util.py\", line 396, in wrapped_func\n",
+            "    result = non_optional_func(*args, **kwargs)\n",
+            "  File \"/usr/local/lib/python3.10/dist-packages/streamlit/elements/pyplot.py\", line 109, in pyplot\n",
+            "    marshall(\n",
+            "  File \"/usr/local/lib/python3.10/dist-packages/streamlit/elements/pyplot.py\", line 161, in marshall\n",
+            "    fig.savefig(image, **kwargs)\n",
+            "AttributeError: 'Axes' object has no attribute 'savefig'\n",
+            "2023-12-27 06:00:24.529 `st.cache` is deprecated. Please use one of Streamlit's new caching commands,\n",
+            "`st.cache_data` or `st.cache_resource`.\n",
+            "\n",
+            "More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).\n",
+            "2023-12-27 06:00:34.770 `st.cache` is deprecated. Please use one of Streamlit's new caching commands,\n",
+            "`st.cache_data` or `st.cache_resource`.\n",
+            "\n",
+            "More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).\n",
+            "2023-12-27 06:01:15.843 `st.cache` is deprecated. Please use one of Streamlit's new caching commands,\n",
+            "`st.cache_data` or `st.cache_resource`.\n",
+            "\n",
+            "More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).\n",
+            "2023-12-27 06:01:15.906 Uncaught app exception\n",
+            "Traceback (most recent call last):\n",
+            "  File \"/usr/local/lib/python3.10/dist-packages/streamlit/runtime/scriptrunner/script_runner.py\", line 534, in _run_script\n",
+            "    exec(code, module.__dict__)\n",
+            "  File \"/content/app.py\", line 52, in <module>\n",
+            "    st.pyplot(survival_by_age_group)\n",
+            "  File \"/usr/local/lib/python3.10/dist-packages/streamlit/runtime/metrics_util.py\", line 396, in wrapped_func\n",
+            "    result = non_optional_func(*args, **kwargs)\n",
+            "  File \"/usr/local/lib/python3.10/dist-packages/streamlit/elements/pyplot.py\", line 109, in pyplot\n",
+            "    marshall(\n",
+            "  File \"/usr/local/lib/python3.10/dist-packages/streamlit/elements/pyplot.py\", line 161, in marshall\n",
+            "    fig.savefig(image, **kwargs)\n",
+            "AttributeError: 'Axes' object has no attribute 'savefig'\n",
+            "2023-12-27 06:01:22.014 Uncaught app exception\n",
+            "streamlit.runtime.legacy_caching.caching.CachedObjectMutationWarning: Return value of `load_data()` was mutated between runs.\n",
+            "\n",
+            "By default, Streamlit's cache should be treated as immutable, or it may behave\n",
+            "in unexpected ways. You received this warning because Streamlit detected\n",
+            "that an object returned by `load_data()` was mutated outside of `load_data()`.\n",
+            "\n",
+            "How to fix this:\n",
+            "* If you did not mean to mutate that return value:\n",
+            "  - If possible, inspect your code to find and remove that mutation.\n",
+            "  - Otherwise, you could also clone the returned value so you can freely\n",
+            "    mutate it.\n",
+            "* If you actually meant to mutate the return value and know the consequences of\n",
+            "doing so, annotate the function with `@st.cache(allow_output_mutation=True)`.\n",
+            "\n",
+            "For more information and detailed solutions check out [our documentation.]\n",
+            "(https://docs.streamlit.io/library/advanced-features/caching)\n",
+            "            \n",
+            "2023-12-27 06:01:22.018 `st.cache` is deprecated. Please use one of Streamlit's new caching commands,\n",
+            "`st.cache_data` or `st.cache_resource`.\n",
+            "\n",
+            "More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).\n",
+            "2023-12-27 06:01:22.076 Uncaught app exception\n",
+            "Traceback (most recent call last):\n",
+            "  File \"/usr/local/lib/python3.10/dist-packages/streamlit/runtime/scriptrunner/script_runner.py\", line 534, in _run_script\n",
+            "    exec(code, module.__dict__)\n",
+            "  File \"/content/app.py\", line 45, in <module>\n",
+            "    st.pyplot(survival_by_class)\n",
+            "  File \"/usr/local/lib/python3.10/dist-packages/streamlit/runtime/metrics_util.py\", line 396, in wrapped_func\n",
+            "    result = non_optional_func(*args, **kwargs)\n",
+            "  File \"/usr/local/lib/python3.10/dist-packages/streamlit/elements/pyplot.py\", line 109, in pyplot\n",
+            "    marshall(\n",
+            "  File \"/usr/local/lib/python3.10/dist-packages/streamlit/elements/pyplot.py\", line 161, in marshall\n",
+            "    fig.savefig(image, **kwargs)\n",
+            "AttributeError: 'Axes' object has no attribute 'savefig'\n",
+            "2023-12-27 06:01:43.305 Uncaught app exception\n",
+            "streamlit.runtime.legacy_caching.caching.CachedObjectMutationWarning: Return value of `load_data()` was mutated between runs.\n",
+            "\n",
+            "By default, Streamlit's cache should be treated as immutable, or it may behave\n",
+            "in unexpected ways. You received this warning because Streamlit detected\n",
+            "that an object returned by `load_data()` was mutated outside of `load_data()`.\n",
+            "\n",
+            "How to fix this:\n",
+            "* If you did not mean to mutate that return value:\n",
+            "  - If possible, inspect your code to find and remove that mutation.\n",
+            "  - Otherwise, you could also clone the returned value so you can freely\n",
+            "    mutate it.\n",
+            "* If you actually meant to mutate the return value and know the consequences of\n",
+            "doing so, annotate the function with `@st.cache(allow_output_mutation=True)`.\n",
+            "\n",
+            "For more information and detailed solutions check out [our documentation.]\n",
+            "(https://docs.streamlit.io/library/advanced-features/caching)\n",
+            "            \n",
+            "2023-12-27 06:01:43.306 `st.cache` is deprecated. Please use one of Streamlit's new caching commands,\n",
+            "`st.cache_data` or `st.cache_resource`.\n",
+            "\n",
+            "More information [in our docs](https://docs.streamlit.io/library/advanced-features/caching).\n"
+          ]
+        }
+      ],
+      "source": [
+        "! streamlit run app.py & npx localtunnel --port 8501"
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyNp2+ih2NPyxuji6FaiIJwu",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
